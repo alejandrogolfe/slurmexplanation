@@ -78,10 +78,10 @@ The script uses `argparse` to define the environment, resources, and execution c
 
 | Argument | Type | Default Value | Description |
 | :--- | :--- | :--- | :--- |
-| `--upv_alias` | `str` | *Your Username* | The **UPV username** used for Slurm job tracking. |
-| `--project_name` | `str` | `GRAPH_NETWORK` | Name used for project identification and logging. |
+| `--upv_alias` | `str` | "" | The **UPV username** used for Slurm job tracking. |
+| `--project_name` | `str` | "" | Name used for project identification and logging. |
 | `--partition_queue` | `str` | `gpuDGX` | The **queue/partition** to use. Options: `gpuServer` or `gpuDGX`. |
-| `--gpus_node` | `int` | `4` | **Number of GPU(s)** to be requested for the job. |
+| `--gpus_node` | `int` | "" | **Number of GPU(s)** to be requested for the job. |
 
 #### Script & Docker Variables
 
@@ -89,15 +89,15 @@ The script uses `argparse` to define the environment, resources, and execution c
 | :--- | :--- | :--- | :--- |
 | `--docker_image` | `str` | `nvcr.io/nvidia/pytorch:23.10-py3` | Name of the **Docker image** to use for the container. |
 | `--docker_folder` | `str` | `""` | Folder containing a **Dockerfile** to build a custom image (if empty, uses `--docker_image`). |
-| `--local_code_folder` | `str` | `~/code` | Folder on the Slurm master where the code is located. Mapped to `/workspace/code`. |
-| `--nas_data_folder` | `str` | *Long Path* | NAS folder for **datasets** (read-only). Mapped to `/workspace/data`. |
-| `--nas_results_folder` | `str` | *Long Path* | NAS folder for **results**. Mapped to `/workspace/results`. |
+| `--local_code_folder` | `str` | "" | Folder on the Slurm master where the code is located. Mapped to `/workspace/code`. |
+| `--nas_data_folder` | `str` | ""| NAS folder for **datasets** (read-only). Mapped to `/workspace/data`. |
+| `--nas_results_folder` | `str` |"" | NAS folder for **results**. Mapped to `/workspace/results`. |
 | `--server_folder` | `str` | `""` | DGX (or server) folder to bind. Mapped to `/DGXFolder`. |
 | `--command` | `str` | *Long Command* | The **command(s) to execute** inside the container (e.g., `pip install -r... && python main.py`). |
 
 #### Git Variables
 
-| Argument | Type | Default Value | Description | |
+| Argument | Type | Default Value | Description |
 | :--- | :--- | :--- | :--- |
 | `--is_git` | `store_true` | `False` | Flag to indicate that the code should be copied using the **GIT repository**. |
 | `--repo_url` | `str` | `git@github.com:CVBLAB-DEVELOP/CBIR.git` | The URL of the GIT repository to clone. |
