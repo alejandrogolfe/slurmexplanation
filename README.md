@@ -54,25 +54,65 @@ Once you've modified your code on the local branch, follow these steps to synchr
 
 ---
 
+---
+
+---
+
 ## ⚡ Slurm: Essential Commands in HPC
 
 **Slurm** (*Simple Linux Utility for Resource Management*) is the most common workload manager in HPC clusters.
 
 ### 1. Submit a Job
 
-Jobs are typically defined in a shell script (`.sh`) that includes Slurm directives (lines starting with `#SBATCH`).
+Jobs are launched using a specific Python script, which handles the necessary environment setup and queues the job with Slurm directives internally.
 
 | **Action** | **Command** | **Description** |
 | :--- | :--- | :--- |
-| **Submit Job** | `sbatch my_job.sh` | Submits the script to the Slurm queue for execution. |
+| **Submit Job** | `python3 execute_job.py --is_git` | Executes the script, queuing the job and applying version control flags. |
 
-### 2. Monitoring and Management
+### 2. Arguments for `execute_job.py`
 
-Once the job is in the queue or running, you can use the following commands:
+The script uses `argparse` to define the environment, resources, and execution command.
+
+#### Slurm & Resource Variables
+
+| Argument | Type | Default Value | Description |
+| :--- | :--- | :--- | :--- |
+| `--upv_alias` | `str` | *Your Username* | The **UPV username** used for Slurm job tracking. |
+| `--project_name` | `str` | `GRAPH_NETWORK` | Name used for project identification and logging. |
+| `--partition_queue` | `str` | `gpuDGX` | The **queue/partition** to use. Options: `gpuServer` or `gpuDGX`. |
+| `--gpus_node` | `int` | `4` | **Number of GPU(s)** to be requested for the job. |
+
+#### Script & Docker Variables
+
+| Argument | Type | Default Value | Description |
+| :--- | :--- | :--- | :--- |
+| `--docker_image` | `str` | `nvcr.io/nvidia/pytorch:23.10-py3` | Name of the **Docker image** to use for the container. |
+| `--docker_folder` | `str` | `""` | Folder containing a **Dockerfile** to build a custom image (if empty, uses `--docker_image`). |
+| `--local_code_folder` | `str` | `~/code` | Folder on the Slurm master where the code is located. Mapped to `/workspace/code`. |
+| `--nas_data_folder` | `str` | *Long Path* | NAS folder for **datasets** (read-only). Mapped to `/workspace/data`. |
+| `--nas_results_folder` | `str` | *Long Path* | NAS folder for **results**. Mapped to `/workspace/results`. |
+| `--server_folder` | `str` | `""` | DGX (or server) folder to bind. Mapped to `/DGXFolder`. |
+| `--command` | `str` | *Long Command* | The **command(s) to execute** inside the container (e.g., `pip install -r... && python main.py`). |
+
+#### Git Variables
+
+| Argument | Type | Default Value | Description | |
+| :--- | :--- | :--- | :--- |
+| `--is_git` | `store_true` | `False` | Flag to indicate that the code should be copied using the **GIT repository**. |
+| `--repo_url` | `str` | `git@github.com:CVBLAB-DEVELOP/CBIR.git` | The URL of the GIT repository to clone. |
+| `--git_branch` | `str` | `develop` | The specific **branch** of the repository to download. |
+| `--commit_hash` | `str` | `""` | The hash of the specific **commit version** to download (empty means the latest version). |
+
+### 3. Monitoring and Management
+
+Once the job is queued or running, use these commands for control and monitoring:
 
 | **Action** | **Command** | **Description** |
 | :--- | :--- | :--- |
-| **View Your Queue** | `squeue -u $USER` | Shows only your jobs in queue or running. |
-| **Cancel Job** | `scancel <job_id>` | Stops and removes a job from the queue or execution. |
+| **View Your Jobs** | `squeue -u $USER` | Shows only your jobs that are running or pending in the queue. |
+| **Attach to Docker** | `sdocker_attach --job_id <job_id>` | Attaches to the running Docker environment of a specific job (requires the job ID). |
+| **Cancel Single Job** | `scancel <job_id>` | Stops and removes a specific job from the queue or execution. |
+| **Cancel ALL My Jobs** | `scancel -u $USER` | Stops and removes all your jobs (running and pending) simultaneously. |
 
-### Basic Slurm Script Example (`my_job.sh`)
+---
