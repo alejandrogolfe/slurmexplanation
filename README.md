@@ -54,10 +54,6 @@ Once you've modified your code on the local branch, follow these steps to synchr
 
 ---
 
----
-
----
-
 ## ⚡ Slurm: Essential Commands in HPC
 
 **Slurm** (*Simple Linux Utility for Resource Management*) is the most common workload manager in HPC clusters.
